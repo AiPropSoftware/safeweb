@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SafeWeb — Enrollment & Settings</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main>
+      <h1>🛡️ SafeWeb setup</h1>
+      <p class="lead">Connect this device to an accountability partner or parent so they can help you stay on track. SafeWeb is transparent by design: you'll always see it's active and who receives your reports.</p>
+
+      <section class="card" id="statusCard">
+        <h2>Status</h2>
+        <div id="status">Loading…</div>
+      </section>
+
+      <section class="card" id="enrollCard">
+        <h2>Enroll this device</h2>
+        <p class="hint">Your partner creates an enrollment code in their SafeWeb dashboard. Enter it below.</p>
+        <form id="enrollForm">
+          <label for="serverUrl">SafeWeb server URL</label>
+          <input id="serverUrl" placeholder="https://safeweb.yourfamily.example" required />
+
+          <label for="code">Enrollment code</label>
+          <input id="code" placeholder="XXXX-XXXX-XXXX" autocomplete="off" />
+
+          <label for="personName">Your name (optional)</label>
+          <input id="personName" placeholder="e.g. Sam" />
+
+          <label class="consent">
+            <input type="checkbox" id="consent" />
+            <span>I understand that after enrollment, my web activity (blocked sites and trigger-word matches) will be monitored and shared with my chosen accountability partner. I agree to this.</span>
+          </label>
+
+          <button class="primary" type="submit" id="enrollBtn" disabled>Enroll with consent</button>
+          <p class="error" id="enrollError"></p>
+        </form>
+
+        <details class="advanced">
+          <summary>Advanced: enroll with a device token instead</summary>
+          <label for="tokenServerUrl">Server URL</label>
+          <input id="tokenServerUrl" placeholder="https://…" />
+          <label for="deviceToken">Device token</label>
+          <input id="deviceToken" placeholder="swd_…" autocomplete="off" />
+          <label class="consent"><input type="checkbox" id="consentToken" /><span>I consent to being monitored by my accountability partner.</span></label>
+          <button class="ghost" id="tokenBtn" type="button">Save token</button>
+        </details>
+      </section>
+
+      <section class="card" id="unenrollCard" hidden>
+        <h2>Remove monitoring</h2>
+        <p class="hint">You can turn SafeWeb monitoring off at any time — but doing so notifies your accountability partner. Nothing is hidden.</p>
+        <button class="danger" id="unenrollBtn">Turn off monitoring &amp; notify partner</button>
+      </section>
+    </main>
+    <script type="module" src="options.js"></script>
+  </body>
+</html>

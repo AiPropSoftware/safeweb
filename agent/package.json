@@ -1,0 +1,16 @@
+{
+  "name": "@safeweb/agent",
+  "version": "0.1.0",
+  "description": "SafeWeb OS-level system agent — blocks adult/blocklisted domains for all apps by managing the hosts file between marker comments. Defense-in-depth alongside the browser extension.",
+  "type": "module",
+  "bin": {
+    "safeweb-agent": "src/cli.js"
+  },
+  "scripts": {
+    "test": "node --test \"src/*.test.js\""
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

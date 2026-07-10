@@ -1,0 +1,23 @@
+{
+  "name": "safeweb",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SafeWeb — on-device adult-content filtering with transparent, consent-based accountability and parental monitoring.",
+  "type": "module",
+  "workspaces": ["shared", "server", "agent"],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test \"shared/*.test.js\" \"server/src/*.test.js\" \"agent/src/*.test.js\" \"extension/*.test.js\"",
+    "test:shared": "node --test \"shared/*.test.js\"",
+    "test:server": "node --test \"server/src/*.test.js\"",
+    "test:agent": "node --test \"agent/src/*.test.js\"",
+    "gen:rules": "node scripts/gen-dnr-rules.js",
+    "sync:shared": "node scripts/sync-shared.js",
+    "build": "npm run gen:rules && npm run sync:shared",
+    "demo": "node scripts/demo.js",
+    "start": "node server/src/index.js"
+  },
+  "license": "MIT"
+}

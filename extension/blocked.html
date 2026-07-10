@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Blocked by SafeWeb</title>
+    <link rel="stylesheet" href="blocked.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <div class="shield">🛡️</div>
+      <h1>This site is blocked</h1>
+      <p class="lead">SafeWeb blocked <code id="domain">this page</code> because it matched your content filter.</p>
+      <p class="who" id="who"></p>
+      <p class="encourage">You've got this. Taking a different path right now is a real win. If you need to reach this page for a legitimate reason, you can let your accountability partner know.</p>
+      <div class="actions">
+        <button id="backBtn" class="primary">Go back</button>
+        <button id="requestBtn" class="ghost">Request access from my partner</button>
+      </div>
+      <p class="note" id="requestNote" hidden>Your accountability partner has been notified of this request.</p>
+      <p class="footer">SafeWeb is transparent by design — you always know it's here and who receives your reports.</p>
+    </main>
+    <script type="module" src="blocked.js"></script>
+  </body>
+</html>

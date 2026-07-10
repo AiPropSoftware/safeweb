@@ -1,0 +1,12 @@
+{
+  "name": "@safeweb/server",
+  "version": "0.1.0",
+  "description": "SafeWeb accountability server — zero-dependency node:http API, SSE alerts, and dashboard host",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test"
+  },
+  "license": "MIT"
+}

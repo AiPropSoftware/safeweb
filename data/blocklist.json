@@ -1,0 +1,51 @@
+{
+  "$schema": "SafeWeb categorized domain blocklist. Each domain also blocks its subdomains.",
+  "version": "2026.07.10",
+  "note": "This is a curated SEED list of well-known adult domains for demonstration and first-run protection. In production, merge with a maintained public blocklist (e.g. StevenBlack/hosts 'porn' extension, or Cloudflare/OpenDNS category feeds) via scripts/update-blocklist.js. Categories map to config.blockedCategories.",
+  "categories": {
+    "adult": [
+      "pornhub.com",
+      "xvideos.com",
+      "xnxx.com",
+      "xhamster.com",
+      "redtube.com",
+      "youporn.com",
+      "tube8.com",
+      "spankbang.com",
+      "porn.com",
+      "sex.com",
+      "brazzers.com",
+      "bangbros.com",
+      "youjizz.com",
+      "eporner.com",
+      "hqporner.com",
+      "txxx.com",
+      "beeg.com",
+      "motherless.com",
+      "chaturbate.com",
+      "livejasmin.com",
+      "stripchat.com",
+      "bongacams.com",
+      "cam4.com",
+      "myfreecams.com"
+    ],
+    "nudity": [
+      "onlyfans.com",
+      "fansly.com",
+      "manyvids.com",
+      "clips4sale.com",
+      "erome.com",
+      "imagefap.com"
+    ],
+    "dating-explicit": [
+      "adultfriendfinder.com",
+      "ashley-madison.com",
+      "ashleymadison.com",
+      "fling.com",
+      "benaughty.com",
+      "alt.com"
+    ],
+    "escort": ["eros.com", "slixa.com", "tryst.link"],
+    "gambling": ["bet365.com", "stake.com", "pokerstars.com", "draftkings.com"]
+  }
+}

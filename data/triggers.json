@@ -1,0 +1,39 @@
+{
+  "$schema": "SafeWeb default trigger-word categories. Words are scanned (case/obfuscation-insensitive) in URLs, search queries, and — when enabled — visible page text.",
+  "version": "2026.07.10",
+  "note": "A deliberately conservative default set. Accountability partners can add, remove, or disable whole categories from the dashboard. Whole-word matching plus obfuscation folding is applied by shared/matcher.js. Keep terms lowercase; severity is one of info|low|medium|high.",
+  "categories": {
+    "explicit": {
+      "severity": "high",
+      "description": "Sexually explicit terms strongly associated with adult content.",
+      "terms": [
+        "porn",
+        "pornography",
+        "xxx",
+        "nsfw",
+        "explicit sex",
+        "hardcore",
+        "camgirl",
+        "webcam sex",
+        "nude",
+        "nudes",
+        "naked photos"
+      ]
+    },
+    "solicitation": {
+      "severity": "high",
+      "description": "Terms associated with escort/solicitation searches.",
+      "terms": ["escort", "escorts", "call girl", "hookup tonight", "adult classifieds"]
+    },
+    "search-intent": {
+      "severity": "medium",
+      "description": "Phrases that indicate an intent to seek out adult material.",
+      "terms": ["free porn", "porn site", "adult video", "sex video", "watch porn"]
+    },
+    "self-harm": {
+      "severity": "high",
+      "description": "Optional safety category — surfaces crisis-related searches so a parent can reach out. Off by default; enable with care.",
+      "terms": ["how to self harm", "ways to hurt myself"]
+    }
+  }
+}

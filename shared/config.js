@@ -1,0 +1,57 @@
+// Resolve raw blocklist/trigger data + a partner FilterConfig into the concrete
+// matchers the detection engine uses. Kept separate from matcher.js so the
+// pure matching logic has no knowledge of the data file shapes.
+
+import { DomainMatcher, TriggerMatcher } from './matcher.js';
+
+/**
+ * @param {object} blocklistData  parsed data/blocklist.json
+ * @param {import('./protocol.js').FilterConfig} config
+ * @returns {DomainMatcher}
+ */
+export function buildDomainMatcher(blocklistData, config) {
+  const blocked = [];
+  const cats = blocklistData?.categories || {};
+  for (const cat of config.blockedCategories || []) {
+    if (Array.isArray(cats[cat])) blocked.push(...cats[cat]);
+  }
+  if (Array.isArray(config.customBlockedDomains)) blocked.push(...config.customBlockedDomains);
+  return new DomainMatcher({ blocked, allowed: config.allowedDomains || [] });
+}
+
+/**
+ * @param {object} triggersData  parsed data/triggers.json
+ * @param {import('./protocol.js').FilterConfig} config
+ * @returns {TriggerMatcher}
+ */
+export function buildTriggerMatcher(triggersData, config) {
+  const terms = [];
+  const cats = triggersData?.categories || {};
+  for (const catName of config.triggerCategories || []) {
+    const cat = cats[catName];
+    if (!cat || !Array.isArray(cat.terms)) continue;
+    for (const term of cat.terms) {
+      terms.push({ term, category: catName, severity: cat.severity || 'medium' });
+    }
+  }
+  for (const term of config.customTriggerWords || []) {
+    terms.push({ term, category: 'custom', severity: 'medium' });
+  }
+  return new TriggerMatcher(terms);
+}
+
+/**
+ * Flatten the categorized blocklist into the domain list a browser extension's
+ * declarativeNetRequest ruleset needs.
+ * @param {object} blocklistData
+ * @param {string[]} categories
+ * @returns {string[]} unique domains
+ */
+export function flattenBlockedDomains(blocklistData, categories) {
+  const out = new Set();
+  const cats = blocklistData?.categories || {};
+  for (const cat of categories || []) {
+    for (const d of cats[cat] || []) out.add(d);
+  }
+  return [...out];
+}
