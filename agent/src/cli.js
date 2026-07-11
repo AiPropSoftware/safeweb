@@ -21,9 +21,10 @@ import {
 import { hostsPath, configPath, configDir, isElevated } from './paths.js';
 import { API, EVENT_TYPES, SEVERITY, defaultConfig } from '../../shared/protocol.js';
 import { flattenBlockedDomains } from '../../shared/config.js';
+import { loadMergedBlocklist } from '../../scripts/lib/load-blocklist.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_BLOCKLIST = join(__dirname, '..', '..', 'data', 'blocklist.json');
+const DATA_DIR = join(__dirname, '..', '..', 'data');
 
 // ---- small helpers --------------------------------------------------------
 function parseFlags(argv) {
@@ -78,7 +79,7 @@ function requireElevationOrExit() {
 }
 
 function offlineBlockedDomains() {
-  const data = JSON.parse(readFileSync(DATA_BLOCKLIST, 'utf8'));
+  const data = loadMergedBlocklist(DATA_DIR);
   return flattenBlockedDomains(data, defaultConfig().blockedCategories);
 }
 

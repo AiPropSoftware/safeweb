@@ -15,6 +15,7 @@
     "test:agent": "node --test \"agent/src/*.test.js\"",
     "gen:rules": "node scripts/gen-dnr-rules.js",
     "sync:shared": "node scripts/sync-shared.js",
+    "update:blocklist": "node scripts/update-blocklist.js",
     "build": "npm run gen:rules && npm run sync:shared",
     "demo": "node scripts/demo.js",
     "start": "node server/src/index.js"

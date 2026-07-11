@@ -31,6 +31,7 @@ import {
 } from '../../shared/crypto.js';
 import { createAuth, createRateLimiter } from './auth.js';
 import { createAlertHub, buildAlert } from './alerts.js';
+import { loadMergedBlocklist } from '../../scripts/lib/load-blocklist.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = join(__dirname, '..', 'public');
@@ -62,8 +63,9 @@ export function createApp({ db, mailer, pepper, secret = 'dev-secret' }) {
   const loginLimiter = createRateLimiter({ windowMs: 60_000, max: 10 });
   const claimLimiter = createRateLimiter({ windowMs: 60_000, max: 20 });
 
-  // Load the categorized data files once.
-  const blocklistData = JSON.parse(readFileSync(join(DATA_DIR_ROOT, 'blocklist.json'), 'utf8'));
+  // Load the categorized data files once. The blocklist is the curated seed
+  // merged with the optional generated extended list (npm run update:blocklist).
+  const blocklistData = loadMergedBlocklist(DATA_DIR_ROOT);
   const triggersData = JSON.parse(readFileSync(join(DATA_DIR_ROOT, 'triggers.json'), 'utf8'));
 
   const server = createServer((req, res) => {

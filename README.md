@@ -80,6 +80,22 @@ node agent/src/cli.js enroll --server http://localhost:8080 --code XXXX-XXXX-XXX
 sudo node agent/src/cli.js install
 ```
 
+## Full blocklist (optional)
+
+The committed `data/blocklist.json` is a small **curated seed**. To pull a full,
+maintained public list (~64k adult domains from the MIT-licensed
+[StevenBlack/hosts](https://github.com/StevenBlack/hosts) porn list):
+
+```bash
+npm run update:blocklist     # writes data/blocklist.extended.json (gitignored)
+npm run gen:rules            # rebuild the browser ruleset from the merged list
+```
+
+The server and the OS-level agent merge the extended list automatically and use
+it in full. The browser's static ruleset is capped at Chrome's 30,000-rule limit
+(the remainder is enforced by the server's runtime rules and the system agent).
+The extended file is gitignored because it's large and regenerable.
+
 ## Configuration (server)
 
 | Env var | Default | Purpose |

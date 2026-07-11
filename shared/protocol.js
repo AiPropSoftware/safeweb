@@ -153,7 +153,7 @@ export function defaultConfig() {
   return {
     protocolVersion: PROTOCOL_VERSION,
     revision: 1,
-    blockedCategories: ['adult', 'nudity', 'dating-explicit'],
+    blockedCategories: ['adult', 'nudity', 'dating-explicit', 'adult-extended'],
     customBlockedDomains: [],
     allowedDomains: [],
     triggerCategories: ['explicit', 'solicitation'],
