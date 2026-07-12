@@ -8,12 +8,15 @@ import { request as httpsRequest } from 'node:https';
 /**
  * Create a mailer. Transports:
  *   - 'console' (default): logs a formatted alert. Perfect for the demo and for
- *     self-hosters who haven't configured SMTP yet.
- *   - 'webhook': POSTs the alert JSON to `webhookUrl` (e.g. a chat webhook).
+ *     self-hosters who haven't configured email yet.
+ *   - 'webhook': POSTs the alert JSON to `webhookUrl` (e.g. a Slack/Discord or
+ *     automation webhook — a zero-config way to get real notifications).
+ *   - 'email': POSTs to a REST email API (Resend-compatible by default) so the
+ *     accountability partner receives an actual email. Dependency-free.
  *   - custom: pass `send(alert)` directly.
- * @param {{ transport?: string, webhookUrl?: string, send?: Function, logger?: Function }} opts
+ * @param {{ transport?: string, webhookUrl?: string, email?: object, send?: Function, logger?: Function }} opts
  */
-export function createMailer({ transport = 'console', webhookUrl, send, logger = console.log } = {}) {
+export function createMailer({ transport = 'console', webhookUrl, email, send, logger = console.log } = {}) {
   if (typeof send === 'function') return { send };
 
   if (transport === 'webhook') {
@@ -21,6 +24,28 @@ export function createMailer({ transport = 'console', webhookUrl, send, logger =
       async send(alert) {
         if (!webhookUrl) return;
         await postJson(webhookUrl, alert).catch((e) => logger('[alert] webhook failed:', e.message));
+      },
+    };
+  }
+
+  if (transport === 'email') {
+    const cfg = email || {};
+    const apiUrl = cfg.apiUrl || 'https://api.resend.com/emails';
+    return {
+      async send(alert) {
+        if (!cfg.apiKey || !alert.partnerEmail) {
+          logger('[alert] email transport not fully configured (need EMAIL_API_KEY); skipping.');
+          return;
+        }
+        const body = {
+          from: cfg.from || 'SafeWeb <alerts@safeweb.local>',
+          to: [alert.partnerEmail],
+          subject: `SafeWeb alert: ${prettyType(alert.type)} on ${alert.deviceLabel || 'a device'}`,
+          html: renderEmailHtml(alert),
+        };
+        await postJson(apiUrl, body, { authorization: `Bearer ${cfg.apiKey}` }).catch((e) =>
+          logger('[alert] email send failed:', e.message),
+        );
       },
     };
   }
@@ -101,7 +126,7 @@ export function buildAlert({ event, device, partner }) {
   };
 }
 
-function postJson(url, body) {
+function postJson(url, body, extraHeaders = {}) {
   return new Promise((resolve, reject) => {
     let u;
     try {
@@ -112,14 +137,64 @@ function postJson(url, body) {
     const data = Buffer.from(JSON.stringify(body));
     const req = (u.protocol === 'https:' ? httpsRequest : httpRequest)(
       u,
-      { method: 'POST', headers: { 'content-type': 'application/json', 'content-length': data.length } },
+      {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'content-length': data.length, ...extraHeaders },
+      },
       (res) => {
         res.resume();
-        res.on('end', resolve);
+        res.on('end', () => {
+          if (res.statusCode && res.statusCode >= 400) reject(new Error(`HTTP ${res.statusCode}`));
+          else resolve();
+        });
       },
     );
     req.on('error', reject);
     req.write(data);
     req.end();
   });
+}
+
+function prettyType(type) {
+  return (
+    {
+      blocked_site: 'Blocked site',
+      trigger_word: 'Trigger word',
+      bypass_attempt: 'Bypass attempt',
+      protection_off: 'Protection turned OFF',
+      protection_on: 'Protection on',
+      heartbeat_missed: 'Device went silent',
+    }[type] || type
+  );
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+
+function renderEmailHtml(alert) {
+  const when = new Date(alert.ts).toLocaleString();
+  const rows = [
+    ['Device', `${esc(alert.deviceLabel)}${alert.personName ? ' — ' + esc(alert.personName) : ''}`],
+    ['Event', esc(prettyType(alert.type))],
+    alert.domain ? ['Site', esc(alert.domain)] : null,
+    alert.matchedTerms?.length ? ['Terms', esc(alert.matchedTerms.join(', '))] : null,
+    alert.context ? ['Context', esc(alert.context)] : null,
+    ['Severity', esc(alert.severity)],
+    ['Time', esc(when)],
+  ].filter(Boolean);
+  return (
+    `<div style="font-family:system-ui,sans-serif;max-width:520px">` +
+    `<h2 style="margin:0 0 8px">🛡️ SafeWeb accountability alert</h2>` +
+    `<table style="border-collapse:collapse;width:100%">` +
+    rows
+      .map(
+        ([k, v]) =>
+          `<tr><td style="padding:4px 10px;color:#667;white-space:nowrap">${k}</td><td style="padding:4px 10px"><strong>${v}</strong></td></tr>`,
+      )
+      .join('') +
+    `</table>` +
+    `<p style="color:#889;font-size:13px;margin-top:14px">You are receiving this because you are the accountability partner for this device. Snippets are redacted on-device before they reach you.</p>` +
+    `</div>`
+  );
 }

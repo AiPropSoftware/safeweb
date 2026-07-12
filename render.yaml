@@ -1,0 +1,29 @@
+# One-click deploy to Render (https://render.com).
+# Render suits SafeWeb well: it supports Docker, a persistent disk for the data
+# dir, long-lived connections (needed for the SSE alert stream), and free HTTPS.
+#
+# Deploy: push this repo to GitHub, then in Render choose
+# "New +" -> "Blueprint" and point it at the repo. Render reads this file.
+services:
+  - type: web
+    name: safeweb
+    runtime: docker
+    plan: starter # a small paid plan; needed for the persistent disk below
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: SAFEWEB_PEPPER
+        generateValue: true # Render generates and stores a strong secret
+      - key: SAFEWEB_SECRET
+        generateValue: true
+      - key: DATA_DIR
+        value: /data
+      - key: ALERT_TRANSPORT
+        value: console # change to 'email' and add the EMAIL_* vars below
+      - key: EMAIL_API_KEY
+        sync: false # set in the dashboard, not committed
+      - key: EMAIL_FROM
+        sync: false
+    disk:
+      name: safeweb-data
+      mountPath: /data
+      sizeGB: 1

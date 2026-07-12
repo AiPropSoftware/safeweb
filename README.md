@@ -63,6 +63,17 @@ registers, mints an enrollment code, a device enrolls **with consent** (and is
 rejected without it), pulls its config, reports a blocked site / trigger word /
 bypass attempt, and the partner sees the report and live alerts.
 
+### Giving it to real people
+
+See **[`DEPLOY.md`](./DEPLOY.md)** for the full rollout guide (host the server via
+one-click Render / Docker / a VM, get the extension onto devices, and connect the
+accountability partner). The short version:
+
+```bash
+cp .env.example .env      # set SAFEWEB_PEPPER + SAFEWEB_SECRET
+docker compose up -d      # server + dashboard at http://localhost:8080
+```
+
 ### Run it for real
 
 ```bash

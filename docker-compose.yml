@@ -1,0 +1,28 @@
+# Self-host SafeWeb with one command:
+#   1. Copy .env.example to .env and set SAFEWEB_PEPPER + SAFEWEB_SECRET
+#   2. docker compose up -d
+#   3. Open http://localhost:8080 and create the accountability-partner account.
+services:
+  safeweb:
+    build: .
+    image: safeweb-server
+    restart: unless-stopped
+    ports:
+      - '8080:8080'
+    environment:
+      PORT: 8080
+      DATA_DIR: /data
+      # Required in production — see .env / .env.example.
+      SAFEWEB_PEPPER: ${SAFEWEB_PEPPER:?set SAFEWEB_PEPPER in your .env}
+      SAFEWEB_SECRET: ${SAFEWEB_SECRET:?set SAFEWEB_SECRET in your .env}
+      # Alerts: 'console' (default), 'webhook', or 'email'.
+      ALERT_TRANSPORT: ${ALERT_TRANSPORT:-console}
+      ALERT_WEBHOOK: ${ALERT_WEBHOOK:-}
+      EMAIL_API_URL: ${EMAIL_API_URL:-}
+      EMAIL_API_KEY: ${EMAIL_API_KEY:-}
+      EMAIL_FROM: ${EMAIL_FROM:-}
+    volumes:
+      - safeweb-data:/data
+
+volumes:
+  safeweb-data:

@@ -29,6 +29,11 @@ const db = createDb({ dataDir: DATA_DIR });
 const mailer = createMailer({
   transport: process.env.ALERT_TRANSPORT || 'console',
   webhookUrl: process.env.ALERT_WEBHOOK,
+  email: {
+    apiUrl: process.env.EMAIL_API_URL, // defaults to Resend inside createMailer
+    apiKey: process.env.EMAIL_API_KEY,
+    from: process.env.EMAIL_FROM,
+  },
 });
 const app = createApp({ db, mailer, pepper, secret });
 
